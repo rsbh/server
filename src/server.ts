@@ -31,4 +31,12 @@ export default class Server {
       });
     });
   }
+
+  public async stop() {
+    return new Promise(() => {
+      this.app.close(() => {
+        console.log(`Server Successfully Stopped`);
+      });
+    });
+  }
 }
