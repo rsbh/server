@@ -1,5 +1,7 @@
 import http from "http";
 import Logger from "./logger";
+import Router from "./router";
+
 interface ServerOptions {
   port?: number;
 }
@@ -8,11 +10,13 @@ export default class Server {
   port: number;
   app: http.Server;
   logger: Logger;
+  router: Router;
 
   constructor(options?: ServerOptions) {
     this.port = options?.port || Number(process.env.PORT) || 3000;
     this.logger = new Logger();
-    this.app = http.createServer();
+    this.router = new Router();
+    this.app = http.createServer(this.router.requestListener);
   }
 
   public async start() {
