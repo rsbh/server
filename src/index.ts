@@ -13,6 +13,9 @@ async function main() {
   };
   process.on("SIGINT", signalHandler);
   process.on("SIGTERM", signalHandler);
+  server.router.use("GET", "/ping", async (req, res) => {
+    res.end("Hello world");
+  });
   await server.start();
 }
 
