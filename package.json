@@ -31,5 +31,8 @@
     ],
     "ext": "ts",
     "exec": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "chalk": "^3.0.0"
   }
 }
