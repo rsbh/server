@@ -33,6 +33,7 @@
     "exec": "ts-node src/index.ts"
   },
   "dependencies": {
-    "chalk": "^3.0.0"
+    "chalk": "^3.0.0",
+    "find-my-way": "^4.1.0"
   }
 }

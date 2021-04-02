@@ -1,32 +1,25 @@
 import { IncomingMessage, ServerResponse } from "node:http";
+import FindMyWay, { HTTPVersion } from "find-my-way";
 
 type httpHandler = (req: IncomingMessage, res: ServerResponse) => Promise<void>;
+type httpMethods = "GET" | "POST" | "PUT" | "DELETE";
 
 interface Route {
-  method: string;
+  method: httpMethods;
   path: string;
   handler: httpHandler;
 }
 
-const getRouteKey = (method: string, path: string) => {
-  return method.toLowerCase() + "__" + path.toLowerCase();
-};
-
 export default class Router {
-  routes: Record<string, Route>;
+  router: FindMyWay.Instance<HTTPVersion.V1>;
   constructor() {
-    this.routes = {};
+    this.router = FindMyWay({ defaultRoute: this.notFound });
     this.requestListener = this.requestListener.bind(this);
     this.notFound = this.notFound.bind(this);
   }
 
   public async requestListener(req: IncomingMessage, res: ServerResponse) {
-    const { method, url } = req;
-    if (!method || !url) return this.notFound(req, res);
-    const key = getRouteKey(method, url);
-    const route = this.routes[key];
-    if (!route) return this.notFound(req, res);
-    return route.handler(req, res);
+    this.router.lookup(req, res);
   }
 
   private async notFound(req: IncomingMessage, res: ServerResponse) {
@@ -36,12 +29,12 @@ export default class Router {
     res.end(message);
   }
 
-  public async use(method: string = "GET", path: string, handler: httpHandler) {
-    const key = getRouteKey(method, path);
-    this.routes[key] = {
-      method,
-      path,
-      handler,
-    };
+  public async get(path: string, handler: httpHandler) {
+    this.router.on("GET", path, handler);
+  }
+
+  public async use(route: Route) {
+    const { path, method, handler } = route;
+    this.router.on(method, path, handler);
   }
 }
