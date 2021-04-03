@@ -1,4 +1,4 @@
-import Server from "./server";
+import Server, { Request, Response } from "./server";
 import Joi from "joi";
 
 async function main() {
@@ -22,7 +22,7 @@ async function main() {
         abc: Joi.string(),
       }),
     },
-    handler: async (req, res) => {
+    handler: async (req: Request, res: Response) => {
       res.send("Use method");
     },
   });

@@ -1,6 +1,8 @@
 import http from "http";
-import Logger from "./logger";
-import Router from "./router";
+import Logger from "../logger";
+import Router from "../router";
+import Request from "../router/request";
+import Response from "../router/response";
 
 interface ServerOptions {
   port?: number;
@@ -46,3 +48,5 @@ export default class Server {
     });
   }
 }
+
+export { Request, Response };
