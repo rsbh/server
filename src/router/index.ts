@@ -1,8 +1,10 @@
-import { IncomingMessage, ServerResponse } from "node:http";
+import { IncomingMessage, ServerResponse } from "http";
 import FindMyWay, { HTTPVersion } from "find-my-way";
 import Joi, { ValidationError } from "joi";
 import Request from "./request";
-type httpHandler = (req: IncomingMessage, res: ServerResponse) => Promise<void>;
+import Response from "./response";
+
+type httpHandler = (req: Request, res: Response) => Promise<void>;
 type httpMethods = "GET" | "POST" | "PUT" | "DELETE";
 
 interface validateOptions {
@@ -46,23 +48,19 @@ export default class Router {
   }
 
   private async badRequest(
-    req: IncomingMessage,
-    res: ServerResponse,
+    req: Request,
+    res: Response,
     errors: validationErrors
   ) {
     const message = `Bad Request`;
-    res.setHeader("Content-Type", "application/json");
-    res.writeHead(400);
-    res.end(
+    res.raw.setHeader("Content-Type", "application/json");
+    res.raw.writeHead(400);
+    res.raw.end(
       JSON.stringify({
         message,
         errors,
       })
     );
-  }
-
-  public async get(path: string, handler: httpHandler) {
-    this.router.on("GET", path, handler);
   }
 
   private validateReq(
@@ -76,10 +74,11 @@ export default class Router {
     return errors;
   }
 
-  private getHandlerWrapper(route: Route): httpHandler {
+  private getHandlerWrapper(route: Route) {
     const { validate = {}, handler } = route;
-    return (message: IncomingMessage, res: ServerResponse) => {
+    return (message: IncomingMessage, serverResponse: ServerResponse) => {
       const req = new Request(message);
+      const res = new Response(serverResponse);
       const errors = this.validateReq(validate, req);
       if (errors) return this.badRequest(req, res, errors);
       return handler(req, res);

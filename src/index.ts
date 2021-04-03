@@ -14,9 +14,6 @@ async function main() {
   };
   process.on("SIGINT", signalHandler);
   process.on("SIGTERM", signalHandler);
-  server.router.get("/ping", async (req, res) => {
-    res.end("Hello world");
-  });
   server.router.use({
     path: "/",
     method: "GET",
@@ -26,7 +23,7 @@ async function main() {
       }),
     },
     handler: async (req, res) => {
-      res.end("Use method");
+      res.send("Use method");
     },
   });
   await server.start();
