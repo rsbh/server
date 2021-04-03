@@ -1,4 +1,5 @@
 import Server from "./server";
+import Joi from "joi";
 
 async function main() {
   const server = new Server();
@@ -19,6 +20,11 @@ async function main() {
   server.router.use({
     path: "/",
     method: "GET",
+    validate: {
+      query: Joi.object({
+        abc: Joi.string(),
+      }),
+    },
     handler: async (req, res) => {
       res.end("Use method");
     },

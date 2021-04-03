@@ -12,6 +12,8 @@ export default class Request extends IncomingMessage {
     const url = parseurl(req);
     this.pathname = url?.pathname || "";
     this.search = url?.search || "";
-    this.query = querystring.parse(url?.search || "");
+    const searchWithoutPrefix = url?.search?.replace(/^\?/, "") || "";
+    const query = querystring.parse(searchWithoutPrefix);
+    this.query = Object.assign({}, query);
   }
 }
