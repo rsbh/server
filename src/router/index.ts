@@ -1,5 +1,5 @@
 import { IncomingMessage, ServerResponse } from "http";
-import FindMyWay, { HTTPVersion } from "find-my-way";
+import FindMyWay from "find-my-way";
 import Joi, { ValidationError } from "joi";
 import Request from "./request";
 import Response from "./response";
@@ -23,7 +23,7 @@ interface Route {
 }
 
 export default class Router {
-  router: FindMyWay.Instance<HTTPVersion.V1>;
+  router: FindMyWay.Instance<FindMyWay.HTTPVersion.V1>;
   constructor() {
     this.router = FindMyWay({ defaultRoute: this.notFound });
     this.requestListener = this.requestListener.bind(this);
@@ -80,7 +80,8 @@ export default class Router {
       const req = new Request(message);
       const res = new Response(serverResponse);
       const errors = this.validateReq(validate, req);
-      if (errors) return this.badRequest(req, res, errors);
+      if (Object.keys(errors).length > 0)
+        return this.badRequest(req, res, errors);
       return handler(req, res);
     };
   }
