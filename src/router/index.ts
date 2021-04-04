@@ -1,11 +1,11 @@
-import { IncomingMessage, ServerResponse } from "http";
-import FindMyWay from "find-my-way";
-import Joi, { ValidationError } from "joi";
-import Request from "./request";
-import Response from "./response";
+import { IncomingMessage, ServerResponse } from 'http';
+import FindMyWay from 'find-my-way';
+import Joi, { ValidationError } from 'joi';
+import Request from './request';
+import Response from './response';
 
 type httpHandler = (req: Request, res: Response) => Promise<void>;
-type httpMethods = "GET" | "POST" | "PUT" | "DELETE";
+type httpMethods = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 interface validateOptions {
   query?: Joi.ObjectSchema;
@@ -24,6 +24,7 @@ interface Route {
 
 export default class Router {
   router: FindMyWay.Instance<FindMyWay.HTTPVersion.V1>;
+
   constructor() {
     this.router = FindMyWay<FindMyWay.HTTPVersion.V1>({
       defaultRoute: this.notFound,
@@ -48,9 +49,9 @@ export default class Router {
   private async badRequest(
     req: Request,
     res: Response,
-    errors: validationErrors
+    errors: validationErrors,
   ) {
-    const message = `Bad Request`;
+    const message = 'Bad Request';
     res.status(400).json({
       message,
       errors,
@@ -59,7 +60,7 @@ export default class Router {
 
   private validateReq(
     validateRules: validateOptions,
-    req: Request
+    req: Request,
   ): validationErrors {
     const errors: validationErrors = {};
     if (validateRules?.query) {
@@ -73,8 +74,7 @@ export default class Router {
     const { validate = {}, handler } = route;
     return (req: Request, res: Response) => {
       const errors = this.validateReq(validate, req);
-      if (Object.keys(errors).length > 0)
-        return this.badRequest(req, res, errors);
+      if (Object.keys(errors).length > 0) return this.badRequest(req, res, errors);
       return handler(req, res);
     };
   }

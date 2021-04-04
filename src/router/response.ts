@@ -1,5 +1,5 @@
-import { ServerResponse } from "http";
-import Request from "./request";
+import { ServerResponse } from 'http';
+import Request from './request';
 
 export default class Response extends ServerResponse {
   constructor(req: Request) {
@@ -11,7 +11,7 @@ export default class Response extends ServerResponse {
   }
 
   public json(chunk: any) {
-    this.setHeader("Content-Type", "application/json");
+    this.setHeader('Content-Type', 'application/json');
     this.end(JSON.stringify(chunk));
   }
 

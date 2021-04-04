@@ -1,8 +1,8 @@
-import http from "http";
-import Logger from "../logger";
-import Router from "../router";
-import Request from "../router/request";
-import Response from "../router/response";
+import http from 'http';
+import Logger from '../logger';
+import Router from '../router';
+import Request from '../router/request';
+import Response from '../router/response';
 
 interface ServerOptions {
   port?: number;
@@ -10,8 +10,11 @@ interface ServerOptions {
 
 export default class Server {
   port: number;
+
   app: http.Server;
+
   logger: Logger;
+
   router: Router;
 
   constructor(options?: ServerOptions) {
@@ -20,7 +23,7 @@ export default class Server {
     this.router = new Router();
     this.app = http.createServer(
       { IncomingMessage: Request, ServerResponse: Response },
-      this.router.lookup
+      this.router.lookup,
     );
   }
 
@@ -29,13 +32,12 @@ export default class Server {
       this.app.listen(this.port, () => {
         const address = this.app.address();
         if (!address) {
-          this.logger.error(`Unable to start server`);
-          reject(`Unable to start server`);
+          this.logger.error('Unable to start server');
+          reject('Unable to start server');
         } else {
-          const addsString =
-            typeof address === "string"
-              ? address
-              : `${address.address}:${address.port}`;
+          const addsString = typeof address === 'string'
+            ? address
+            : `${address.address}:${address.port}`;
           this.logger.log(`Server started on ${addsString}`);
           resolve(addsString);
         }
@@ -46,7 +48,7 @@ export default class Server {
   public async stop() {
     return new Promise(() => {
       this.app.close(() => {
-        this.logger.log(`Server Successfully Stopped`);
+        this.logger.log('Server Successfully Stopped');
       });
     });
   }
