@@ -27,13 +27,13 @@ export default class Server {
     );
   }
 
-  public async start() {
+  public async start(): Promise<string> {
     return new Promise((resolve, reject) => {
       this.app.listen(this.port, () => {
         const address = this.app.address();
         if (!address) {
           this.logger.error('Unable to start server');
-          reject('Unable to start server');
+          reject(new Error('Unable to start server'));
         } else {
           const addsString = typeof address === 'string'
             ? address
@@ -45,7 +45,7 @@ export default class Server {
     });
   }
 
-  public async stop() {
+  public async stop(): Promise<void> {
     return new Promise(() => {
       this.app.close(() => {
         this.logger.log('Server Successfully Stopped');
