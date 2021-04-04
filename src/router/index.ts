@@ -63,7 +63,8 @@ export default class Router {
   ): validationErrors {
     const errors: validationErrors = {};
     if (validateRules?.query) {
-      errors["query"] = validateRules?.query.validate(req.query).error;
+      const result = validateRules?.query.validate(req.query);
+      if (result.error) errors.query = result.error;
     }
     return errors;
   }
