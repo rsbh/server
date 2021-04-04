@@ -40,13 +40,9 @@ export default class Router {
   private async notFound(req: Request, res: Response) {
     const { method, url } = req;
     const message = `Route ${method}:${url} not found`;
-    res.setHeader("Content-Type", "application/json");
-    res.writeHead(404);
-    res.end(
-      JSON.stringify({
-        message,
-      })
-    );
+    res.status(404).json({
+      message,
+    });
   }
 
   private async badRequest(
@@ -55,14 +51,10 @@ export default class Router {
     errors: validationErrors
   ) {
     const message = `Bad Request`;
-    res.setHeader("Content-Type", "application/json");
-    res.writeHead(400);
-    res.end(
-      JSON.stringify({
-        message,
-        errors,
-      })
-    );
+    res.status(400).json({
+      message,
+      errors,
+    });
   }
 
   private validateReq(
