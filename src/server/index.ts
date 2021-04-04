@@ -18,7 +18,10 @@ export default class Server {
     this.port = options?.port || Number(process.env.PORT) || 3000;
     this.logger = new Logger();
     this.router = new Router();
-    this.app = http.createServer(this.router.requestListener);
+    this.app = http.createServer(
+      { IncomingMessage: Request, ServerResponse: Response },
+      this.router.lookup
+    );
   }
 
   public async start() {

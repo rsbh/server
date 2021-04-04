@@ -1,15 +1,16 @@
 import { IncomingMessage } from "http";
 import querystring, { ParsedUrlQuery } from "querystring";
 import parseurl from "parseurl";
+import { Socket } from "net";
 
 export default class Request extends IncomingMessage {
   pathname: string;
   search: string;
   query: ParsedUrlQuery;
 
-  constructor(req: IncomingMessage) {
-    super(req.socket);
-    const url = parseurl(req);
+  constructor(socket: Socket) {
+    super(socket);
+    const url = parseurl(this);
     this.pathname = url?.pathname || "";
     this.search = url?.search || "";
     const searchWithoutPrefix = url?.search?.replace(/^\?/, "") || "";

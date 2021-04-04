@@ -1,12 +1,12 @@
 import { ServerResponse } from "http";
+import Request from "./request";
 
-export default class Response {
-  raw: ServerResponse;
-  constructor(rawResp: ServerResponse) {
-    this.raw = rawResp;
+export default class Response extends ServerResponse {
+  constructor(req: Request) {
+    super(req);
   }
 
   public send(chunk: any) {
-    this.raw.end(chunk);
+    this.end(chunk);
   }
 }

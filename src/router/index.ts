@@ -25,17 +25,19 @@ interface Route {
 export default class Router {
   router: FindMyWay.Instance<FindMyWay.HTTPVersion.V1>;
   constructor() {
-    this.router = FindMyWay({ defaultRoute: this.notFound });
-    this.requestListener = this.requestListener.bind(this);
+    this.router = FindMyWay<FindMyWay.HTTPVersion.V1>({
+      defaultRoute: this.notFound,
+    });
+    this.lookup = this.lookup.bind(this);
     this.notFound = this.notFound.bind(this);
     this.badRequest = this.badRequest.bind(this);
   }
 
-  public async requestListener(req: IncomingMessage, res: ServerResponse) {
+  public async lookup(req: IncomingMessage, res: ServerResponse) {
     this.router.lookup(req, res);
   }
 
-  private async notFound(req: IncomingMessage, res: ServerResponse) {
+  private async notFound(req: Request, res: Response) {
     const { method, url } = req;
     const message = `Route ${method}:${url} not found`;
     res.setHeader("Content-Type", "application/json");
@@ -53,9 +55,9 @@ export default class Router {
     errors: validationErrors
   ) {
     const message = `Bad Request`;
-    res.raw.setHeader("Content-Type", "application/json");
-    res.raw.writeHead(400);
-    res.raw.end(
+    res.setHeader("Content-Type", "application/json");
+    res.writeHead(400);
+    res.end(
       JSON.stringify({
         message,
         errors,
@@ -76,9 +78,7 @@ export default class Router {
 
   private getHandlerWrapper(route: Route) {
     const { validate = {}, handler } = route;
-    return (message: IncomingMessage, serverResponse: ServerResponse) => {
-      const req = new Request(message);
-      const res = new Response(serverResponse);
+    return (req: Request, res: Response) => {
       const errors = this.validateReq(validate, req);
       if (Object.keys(errors).length > 0)
         return this.badRequest(req, res, errors);
@@ -88,7 +88,7 @@ export default class Router {
 
   public async use(route: Route) {
     const { path, method } = route;
-    const handler = this.getHandlerWrapper(route);
+    const handler: any = this.getHandlerWrapper(route);
     this.router.on(method, path, handler);
   }
 }
